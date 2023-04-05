@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="calc_btn_base_style" parent="TextAppearance.AppCompat">
+        <item name="android:layout_margin">3dp</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+    <style name="calc_btn_fn_style" parent="calc_btn_base_style">
+        <item name="android:textColor">@color/calc_fn_btn_fg</item>
+        <item name="android:background">@drawable/btn_fn_shape</item>
+    </style>
+    <style name="calc_btn_op_style" parent="calc_btn_base_style">
+        <item name="android:textColor">@color/calc_op_btn_fg</item>
+        <item name="android:background">@drawable/btn_op_shape</item>
+    </style>
+    <style name="calc_btn_eq_style" parent="calc_btn_base_style">
+        <item name="android:textColor">@color/calc_eq_btn_fg</item>
+        <item name="android:background">@drawable/btn_eq_shape</item>
+    </style>
+</resources>

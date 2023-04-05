@@ -1,6 +1,8 @@
 package step.learning.course;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,18 +15,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener( this::buttonClick);
+        findViewById(R.id.button_calc).setOnClickListener( this::buttonClick);
 
-        Button buttonDell = findViewById(R.id.button2);
-        buttonDell.setOnClickListener(this::buttonClickDell);
+        findViewById(R.id.button2).setOnClickListener(this::buttonClickDell);
     }
 
     private void buttonClick(View view){
-        TextView textHello = findViewById( R.id.text_hello);
+/*        TextView textHello = findViewById( R.id.text_hello);
         String txt = textHello.getText().toString();
         txt+="!";
-        textHello.setText(txt);
+        textHello.setText(txt);*/
+
+        Intent activityIntent = new Intent(MainActivity.this, CalcActivity.class);
+        startActivity(activityIntent);
+
     }
     private void buttonClickDell(View view){
         TextView textHello = findViewById( R.id.text_hello);

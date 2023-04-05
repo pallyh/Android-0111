@@ -1,5 +1,48 @@
 <resources>
     <string name="app_name">Android-011</string>
-    <string name="big_button">Big Button</string>
+    <!-- Main Activity -->
+    <string name="title_text">Android basics</string>
+    <string name="button_calc_text">Culculator</string>
     <string name="text_dell_btn">Text_Dell_Btn</string>
+
+    <!-- calc Activity -->
+    <!-- Errors -->
+    <string name="calc_error_parse">Argument parse error</string>
+    <string name="calc_error_zero">Division by zero</string>
+    <string name="calc_error_sqrt">Negative under root</string>
+    <!-- Buttons -->
+    <string name="calc_btn_percent_text">%</string>
+    <string name="calc_btn_ce_text">CE</string>
+    <string name="calc_btn_clear_text">C</string>
+    <string name="calc_btn_backspace_text">\u232B</string>
+
+    <string name="calc_btn_divide_by_x_text">\u00b9\u2044\u2093</string>
+    <string name="calc_btn_square_text">x\u00B2</string>
+    <string name="calc_btn_root_of_x_text">\u221A\u2093</string>
+    <string name="calc_btn_divide_text">\u00F7</string>
+
+    <string name="calc_btn_num_seven_text">7</string>
+    <string name="calc_btn_num_eight_text">8</string>
+    <string name="calc_btn_num_nine_text">9</string>
+    <string name="calc_btn_multiply_text">\u00D7</string>
+
+    <string name="calc_btn_num_four_text">4</string>
+    <string name="calc_btn_num_five_text">5</string>
+    <string name="calc_btn_num_six_text">6</string>
+    <string name="calc_btn_minus_text">-</string>
+
+    <string name="calc_btn_num_one_text">1</string>
+    <string name="calc_btn_num_two_text">2</string>
+    <string name="calc_btn_num_three_text">3</string>
+    <string name="calc_btn_plus_text">+</string>
+
+    <string name="calc_btn_plus_minus_text">+/-</string>
+    <string name="calc_btn_num_zero_text">Ø</string>
+    <!-- <string name="calc_btn_num_zero_text">\u2620</string> Fun zero -->
+     <string name="calc_btn_point_text">.</string>
+     <string name="calc_btn_equal_text">=</string>
+
+     <!-- Replace symbols -->
+    <string name="calc_point_symbol">\u166E</string> <!-- . -->
+    <!--  -->
 </resources>
