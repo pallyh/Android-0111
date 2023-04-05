@@ -147,6 +147,7 @@ private int maxSymbol;
         if (result.equals(zeroSymbol) || needClear) {
             result = "";
             tvHistory.setText("");
+            needClear = false;
         }
         displayResult(result);
 
@@ -160,6 +161,7 @@ private int maxSymbol;
         if (result.equals(zeroSymbol) || needClear) {
             result = "";
             tvHistory.setText("");
+            needClear = false;
         }
 
         result += digit;
@@ -168,6 +170,7 @@ private int maxSymbol;
     private void displayResult(String result){
         if ("".equals(result) || minusSign.equals(result) ){
             result = zeroSymbol;
+
         }
 
         tvResult.setText(result);
@@ -177,7 +180,8 @@ private int maxSymbol;
         String result = (argInt == arg ? "" + argInt : "" + arg);
 
         result = result.replace("-" ,minusSign)
-                .replace("0",zeroSymbol);
+                .replace("0",zeroSymbol)
+                .replace(".",pointSymbol);
 
         displayResult(result);
     }
