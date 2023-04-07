@@ -1,9 +1,11 @@
 package step.learning.course;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -57,6 +59,52 @@ private int maxSymbol;
         findViewById(R.id.calc_btn_ce).setOnClickListener(this::clearEditClick);
         findViewById(R.id.calc_btn_x_square).setOnClickListener(this::squareClick);
         findViewById(R.id.calc_btn_divide_by_x).setOnClickListener(this::divineByXClick);
+        findViewById(R.id.calc_btn_square_root_of_x).setOnClickListener(this::sqrtByClick);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedState) {
+        super.onRestoreInstanceState(savedState);
+        Log.d("CalcActivity","onRestoreInstanceState");
+    
+        tvHistory.setText(savedState.getCharSequence("history"));
+        tvResult.setText(savedState.getCharSequence("result"));
+        needClear = savedState.getBoolean("neededClear");
+        pointCreate = savedState.getBoolean("pointCreated");
+        pointSymbolAnInt = savedState.getInt("numberPointSymbol");
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle savingState) {
+        super.onSaveInstanceState(savingState);
+        Log.d("CalcActivity","onSaveInstanceState");
+        savingState.putCharSequence("history",tvHistory.getText());
+        savingState.putCharSequence("result",tvResult.getText());
+        savingState.putBoolean("neededClear",needClear);
+        savingState.putBoolean("pointCreated",pointCreate);
+        savingState.putInt("numberPointSymbol",pointSymbolAnInt);
+    }
+
+    private void sqrtByClick(View view){
+        String result = tvResult.getText().toString();
+        double arg;
+        try {
+
+            arg = Double.parseDouble(
+                    result
+                            .replace(minusSign,"-")
+                            .replaceAll(zeroSymbol , "0")
+                            .replace(pointSymbol,"."));
+        }
+        catch (NumberFormatException | NullPointerException ignored){
+            Toast.makeText(this, R.string.calc_error_parse, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        tvHistory.setText(getString( R.string.calc_inverse_history ,result));
+        arg = Math.sqrt(arg);
+        displayResult(arg);
+        needClear = true;
     }
 
     private void divineByXClick(View view){
@@ -74,7 +122,7 @@ private int maxSymbol;
             Toast.makeText(this, R.string.calc_error_parse, Toast.LENGTH_SHORT).show();
             return;
         }
-        tvHistory.setText("1 / " + result + " =");
+        tvHistory.setText(getString( R.string.calc_inverse_history ,result));
         arg = 1 / arg;
         displayResult(arg);
         needClear = true;
@@ -95,7 +143,7 @@ private int maxSymbol;
             Toast.makeText(this, R.string.calc_error_parse, Toast.LENGTH_SHORT).show();
             return;
         }
-        tvHistory.setText(result + " ^ 2 =");
+        tvHistory.setText(getString( R.string.calc_square_history ,result));
         arg *= arg;
         displayResult(arg);
         needClear = true;

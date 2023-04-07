@@ -44,5 +44,8 @@
 
      <!-- Replace symbols -->
     <string name="calc_point_symbol">\u166E</string> <!-- . -->
+
+    <string name="calc_square_history">%s² =</string>
+    <string name="calc_inverse_history">\u215F\u200A(%s) =</string>
     <!--  -->
 </resources>
