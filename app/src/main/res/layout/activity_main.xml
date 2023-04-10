@@ -36,5 +36,13 @@
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="128dp"
         tools:layout_editor_absoluteY="176dp" />
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_game_btn"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="128dp"
+        tools:layout_editor_absoluteY="176dp" />
 
 </LinearLayout>

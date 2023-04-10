@@ -4,7 +4,11 @@
     <string name="title_text">Android basics</string>
     <string name="button_calc_text">Culculator</string>
     <string name="text_dell_btn">Text_Dell_Btn</string>
+    <string name="text_game_btn">GAME 2048 BTN</string>
 
+    <!--Game 2048 Activity-->
+
+    <!--Game 2048 Activity END-->
     <!-- calc Activity -->
     <!-- Errors -->
     <string name="calc_error_parse">Argument parse error</string>
@@ -39,13 +43,15 @@
     <string name="calc_btn_plus_minus_text">+/-</string>
     <string name="calc_btn_num_zero_text">Ø</string>
     <!-- <string name="calc_btn_num_zero_text">\u2620</string> Fun zero -->
-     <string name="calc_btn_point_text">.</string>
-     <string name="calc_btn_equal_text">=</string>
+    <string name="calc_btn_point_text">.</string>
+    <string name="calc_btn_equal_text">=</string>
 
-     <!-- Replace symbols -->
+    <!-- Replace symbols -->
     <string name="calc_point_symbol">\u166E</string> <!-- . -->
 
     <string name="calc_square_history">%s² =</string>
     <string name="calc_inverse_history">\u215F\u200A(%s) =</string>
-    <!--  -->
+    <!-- Calc End -->
+
+    <!-- End -->
 </resources>

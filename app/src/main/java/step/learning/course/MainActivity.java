@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button_calc).setOnClickListener( this::buttonClick);
 
         findViewById(R.id.button2).setOnClickListener(this::buttonClickDell);
+        findViewById(R.id.button3).setOnClickListener(this::buttonGameClick);
     }
 
     private void buttonClick(View view){
@@ -27,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
         textHello.setText(txt);*/
 
         Intent activityIntent = new Intent(MainActivity.this, CalcActivity.class);
+        startActivity(activityIntent);
+
+    }
+    private void buttonGameClick(View view){
+        Intent activityIntent = new Intent(MainActivity.this, GameActivity.class);
         startActivity(activityIntent);
 
     }

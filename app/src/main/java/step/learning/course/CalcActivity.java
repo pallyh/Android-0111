@@ -1,10 +1,16 @@
 package step.learning.course;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +27,7 @@ private int maxSymbol;
     private String pointSymbol;
     private int pointSymbolAnInt;
     private boolean needClear;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +93,7 @@ private int maxSymbol;
         savingState.putInt("numberPointSymbol",pointSymbolAnInt);
     }
 
+
     private void sqrtByClick(View view){
         String result = tvResult.getText().toString();
         double arg;
@@ -101,10 +109,41 @@ private int maxSymbol;
             Toast.makeText(this, R.string.calc_error_parse, Toast.LENGTH_SHORT).show();
             return;
         }
-        tvHistory.setText(getString( R.string.calc_inverse_history ,result));
-        arg = Math.sqrt(arg);
-        displayResult(arg);
-        needClear = true;
+        if( arg < 0 ) {
+
+           Vibrator vibrator;
+
+           if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                VibratorManager vibratorManager = (VibratorManager)
+                        getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+                vibrator = vibratorManager.getDefaultVibrator();
+            }else {
+                vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            }
+
+            long[] vibratePattern = {0,400,200,400};
+
+           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+             vibrator.vibrate( VibrationEffect.createOneShot(
+                    250,VibrationEffect.DEFAULT_AMPLITUDE
+                     )
+                );
+            vibrator.vibrate(
+                    VibrationEffect.createWaveform(vibratePattern,-1)
+                );
+           } else {
+           /* Самый простой подход -deprecate from 0 (API 26)*/
+            /*Vibrator vibrator ;*/
+            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(250);
+           }
+        }
+        else{
+            tvHistory.setText(getString( R.string.calc_inverse_history ,result));
+            arg = Math.sqrt(arg);
+            displayResult(arg);
+            needClear = true;
+        }
     }
 
     private void divineByXClick(View view){

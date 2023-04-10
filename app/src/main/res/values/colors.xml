@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 2048 Activity-->
+    <color name="game_plate_text">#FFFFFF</color>
+    <color name="game_plate_text_8_more">#000000</color>
+    <color name="game_plate_2">#DFDFDF</color>
+    <color name="game_plate_4">#C3A968</color>
+    <color name="game_plate_8">#E1732B</color>
+    <color name="game_plate_16">#C54614</color>
+    <color name="game_plate_32">#BCA902</color>
+    <color name="game_plate_64">#29B502</color>
+    <color name="game_plate_128">#9F0FAF</color>
+    <color name="game_plate_256">#09DA9F</color>
+    <color name="game_plate_512">#FF045D</color>
+    <color name="game_plate_1024">#0239FA</color>
+    <color name="game_plate_2048">#24FF2E</color>
+    <color name="game_plate_more_2048">#000000</color>
     <!-- calc Activity-->
     <color name="calc_background">#202020</color>
     <color name="calc_history">#919191</color>
