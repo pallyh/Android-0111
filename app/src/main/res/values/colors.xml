@@ -1,9 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 2048 Activity-->
-    <color name="game_plate_text">#FFFFFF</color>
-    <color name="game_plate_text_8_more">#000000</color>
-    <color name="game_plate_2">#DFDFDF</color>
+    <!-- Game Activity -->
+
+    <color name="game_field_bg">#AC9F7E</color>
+    <color name="game_bg_0">#BEAFA0</color>
+    <color name="game_fg_0">#BEAFA0</color>
+    <color name="game_bg_2">#EEE4DA</color>
+    <color name="game_fg_2">#786E64</color>
+    <color name="game_bg_4">#EEE2CE</color>
+    <color name="game_fg_4">#786F65</color>
+    <color name="game_bg_8">#F3B27F</color>
+    <color name="game_fg_8">#F9F6F2</color>
+    <color name="game_bg_16">#F6976B</color>
+
+    <color name="game_fg_16">#F9F4ED</color>
+
+    <color name="game_bg_32">#E58266</color>
+
+    <color name="game_fg_32">#F9F6F1</color>
+
+    <color name="game_bg_64">#E36848</color>
+
+    <color name="game_fg_64">#F9F6F1</color>
+
+    <color name="game_bg_128">#E8D07F</color>
+
+    <color name="game_fg_128">#F8F6F3</color>
+
+    <color name="game_bg_256">#edcc61</color>
+
+    <color name="game_fg_256">#F8F6F3</color>
+
+    <color name="game_bg_512">#edc850</color>
+
+    <color name="game_fg_512">#F8F6F3</color>
+
+    <color name="game_bg_1024">#edc53f</color>
+
+    <color name="game_fg_1024">#F8F6F3</color>
+
+    <color name="game_bg_2048">#edc22e</color>
+
+    <color name="game_fg_2048">#F8F6F3</color>
+
+    <color name="game_bg_4096">#3E3C33</color>
+
+    <color name="game_fg_4096">#F8F6F3</color>
+<!--    <color name="game_plate_2">#DFDFDF</color>
     <color name="game_plate_4">#C3A968</color>
     <color name="game_plate_8">#E1732B</color>
     <color name="game_plate_16">#C54614</color>
@@ -14,7 +57,7 @@
     <color name="game_plate_512">#FF045D</color>
     <color name="game_plate_1024">#0239FA</color>
     <color name="game_plate_2048">#24FF2E</color>
-    <color name="game_plate_more_2048">#000000</color>
+    <color name="game_plate_more_2048">#000000</color>-->
     <!-- calc Activity-->
     <color name="calc_background">#202020</color>
     <color name="calc_history">#919191</color>

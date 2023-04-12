@@ -2,12 +2,27 @@
     <string name="app_name">Android-011</string>
     <!-- Main Activity -->
     <string name="title_text">Android basics</string>
-    <string name="button_calc_text">Culculator</string>
+    <string name="button_calc_text">Calculator</string>
     <string name="text_dell_btn">Text_Dell_Btn</string>
     <string name="text_game_btn">GAME 2048 BTN</string>
 
     <!--Game 2048 Activity-->
-
+    <string name="game_score">score\n%s</string>
+    <string name="game_best_score">best\n%s</string>
+    <string name="game_new_btn">new</string>
+    <string name="game_undo_btn">undo</string>
+<!--    <sting name="game_plate_2">2</sting>
+    <sting name="game_plate_4">4</sting>
+    <sting name="game_plate_8">8</sting>
+    <sting name="game_plate_16">16</sting>
+    <sting name="game_plate_32">32</sting>
+    <sting name="game_plate_64">64</sting>
+    <sting name="game_plate_128">128</sting>
+    <sting name="game_plate_256">256</sting>
+    <sting name="game_plate_512">512</sting>
+    <sting name="game_plate_1024">1024</sting>
+    <sting name="game_plate_2048">2048</sting>
+    <sting name="game_plate_4086">4086</sting>-->
     <!--Game 2048 Activity END-->
     <!-- calc Activity -->
     <!-- Errors -->
