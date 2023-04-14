@@ -63,14 +63,24 @@ public class GameActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onSwipeTop() {
-                            Toast.makeText( GameActivity.this,
-                                    "Left",
+                        /*for (int i = 0; i <N;i++){
+                            for (int j = 0; j < N; j++){
+                                if (cells[i-1][j] == 0){
+                                    cells[i-1][j] = cells[i][j];
+                                    cells[i][j] = 0;
+                                }
+                            }
+                        }
+                        spawnCell();
+                        showField();*/
+                         Toast.makeText( GameActivity.this,
+                                    "Top",
                                     Toast.LENGTH_SHORT)
                                     .show();
                     }@Override
                     public void onSwipeBottom() {
                             Toast.makeText( GameActivity.this,
-                                    "Left",
+                                    "Bottom",
                                     Toast.LENGTH_SHORT)
                                     .show();
                     }
