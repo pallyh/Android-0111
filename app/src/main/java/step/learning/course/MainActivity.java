@@ -46,4 +46,8 @@ public class MainActivity extends AppCompatActivity {
             textHello.setText(txt);
         }
     }
+    private void buttonChatClick( View view ) {
+        Intent activityIntent = new Intent( MainActivity.this, ChatActivity.class ) ;
+        startActivity( activityIntent ) ;
+    }
 }

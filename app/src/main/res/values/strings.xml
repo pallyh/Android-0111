@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Android-011</string>
+    <string name="button_chat_text">Chat</string>
     <!-- Main Activity -->
     <string name="title_text">Android basics</string>
     <string name="button_calc_text">Calculator</string>
@@ -11,7 +12,13 @@
     <string name="game_best_score">best\n%s</string>
     <string name="game_new_btn">new</string>
     <string name="game_undo_btn">undo</string>
-<!--    <sting name="game_plate_2">2</sting>
+    <string name="game_win_dialog_title">!!!YOU WIN!!!</string>
+    <string name="game_win_dialog_message">you collect 2048 and win!\nDo you want to continue?</string>
+    <string name="game_yes_dialog_btn">YES</string>
+    <string name="game_new_dialog_btn">New Game</string>
+    <string name="game_exit_dialog_btn">Close</string>
+    <string name="game_over_dialog_title">YOU LOOSER </string>
+    <!--    <sting name="game_plate_2">2</sting>
     <sting name="game_plate_4">4</sting>
     <sting name="game_plate_8">8</sting>
     <sting name="game_plate_16">16</sting>
