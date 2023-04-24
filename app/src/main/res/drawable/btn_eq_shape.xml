@@ -2,6 +2,12 @@
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/calc_eq_btn_bg" />
-    <corners android:radius="5dp"/>
+
+    <stroke
+        android:color="@color/calc_fn_button_bg"
+        android:width="2dp"/>
+    <solid
+        android:color="@color/calc_eq_button_bg"/>
+    <corners
+        android:radius="5dp"/>
 </shape>

@@ -1,11 +1,16 @@
 package step.learning.course;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -16,11 +21,14 @@ import org.w3c.dom.Text;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -31,7 +39,8 @@ public class ChatActivity extends AppCompatActivity {
     private final String CHAT_URL = "https://diorama-chat.ew.r.appspot.com/story" ;
     private EditText etAuthor ;
     private EditText etMessage ;
-    private TextView tvChat ;
+    private LinearLayout chatContainer ;
+    private ScrollView svContainer ;
     private List<ChatMessage> chatMessages = new ArrayList<>() ;
 
     @Override
@@ -41,7 +50,8 @@ public class ChatActivity extends AppCompatActivity {
 
         etAuthor = findViewById( R.id.chat_et_author ) ;
         etMessage = findViewById( R.id.chat_et_message ) ;
-        tvChat = findViewById( R.id.tv_chat ) ;
+        chatContainer = findViewById( R.id.chat_container ) ;
+        svContainer = findViewById( R.id.sv_container ) ;
         findViewById( R.id.chat_button_send ).setOnClickListener( this::sendMessageClick ) ;
 
         new Thread( this::getChatMessages ).start() ;
@@ -80,15 +90,23 @@ public class ChatActivity extends AppCompatActivity {
             // TODO: check 'status' field for 'success' value
             if( content.has( "data" ) ) {
                 JSONArray data = content.getJSONArray( "data" ) ;
+                boolean wasNewMessage = false ;
                 int len = data.length() ;
                 for( int i = 0; i < len; i++ ) {
-                    chatMessages.add(
-                            new ChatMessage( data.getJSONObject( i ) )
-                    ) ;
+                    // преобразуем сообщение из JSON
+                    ChatMessage tmp = new ChatMessage( data.getJSONObject( i ) ) ;
+                    // проверяем есть ли такое сообщение в хранимом массиве
+                    if( this.chatMessages.stream().noneMatch(
+                            msg -> msg.getId().equals( tmp.getId() ) ) ) {   // по совпадению Id
+                        this.chatMessages.add( tmp ) ;
+                        wasNewMessage = true ;
+                    }
                 }
-                /* Д.З. Реализовать сортировку сообщений - последние (по времени) - идут снизу
-                    Реализовать отображение даты-времени сообщения
-                */
+                if( wasNewMessage ) {
+                    this.chatMessages.sort( Comparator.comparing( ChatMessage::getMoment ) ) ;
+                    // this.chatMessages.sort( (m1, m2) -> m1.getMoment().compareTo( m2.getMoment() ) ) ;
+                    runOnUiThread( this::showChatMessages ) ;
+                }
             }
             else {
                 Log.d( "parseChatMessages", "Content has no 'data' " + loadedContent ) ;
@@ -97,17 +115,102 @@ public class ChatActivity extends AppCompatActivity {
         catch( JSONException ex ) {
             Log.d( "parseChatMessages", ex.getMessage() ) ;
         }
-        runOnUiThread( this::showChatMessages ) ;
     }
     private void showChatMessages() {
-        StringBuilder sb = new StringBuilder() ;
+        Drawable otherBg = AppCompatResources.getDrawable(
+                getApplicationContext(),
+                R.drawable.chat_msg_bg_other ) ;
+        LinearLayout.LayoutParams marginOther = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT ) ;
+        marginOther.setMargins( 10, 10, 10, 10 ) ;
+        boolean wasNewMessage = false ;
         for( ChatMessage message : chatMessages ) {
-            sb.append( message.getAuthor() ).append( ':' ).append( message.getTxt() ).append( '\n' ) ;
+            if( message.getView() != null ) {   // данное сообщение уже отображается
+                continue ;  // пропускаем его
+            }
+            TextView tvMessage = new TextView( ChatActivity.this ) ;
+            tvMessage.setText( message.toViewString() ) ;
+            /* поле Tag традиционно используется для добавления пользовательской информации -
+             * произвольных объектов, связанных с данным представлением (View)
+             * Поместив в это поле ссылку на сообщение мы можем использовать ее в обработчиках
+             * событий, установленных для представления
+             */
+            tvMessage.setTag( message ) ;   // связываем View с ChatMessage
+            message.setView( tvMessage ) ;  // и наоборот
+
+            // стилизуем
+            tvMessage.setBackground( otherBg ) ;
+            tvMessage.setLayoutParams( marginOther ) ;
+            tvMessage.setTextSize( 18 ) ;
+            tvMessage.setPadding( 10, 7, 10, 7 ) ;
+
+            // добавляем сообщение в контейнер
+            chatContainer.addView( tvMessage ) ;
+            wasNewMessage = true ;
         }
-        tvChat.setText( sb.toString() ) ;
+        if( wasNewMessage ) {
+            // даем команду ScrollView прокрутить контент вниз
+            svContainer.post( () -> svContainer.fullScroll( View.FOCUS_DOWN ) ) ;
+        }
+        /*
+        Д.З. Реализовать стилизацию сообщений - свои выводить
+        справа чата и с другим фоном.
+        Признак своего сообщения - совпадение имени автора
+         */
     }
     private void sendMessageClick( View view ) {
+        // TODO: проверить на пустоту автора и сообщение
+        new Thread( this::postChatMessage ).start() ;
+    }
+    private void postChatMessage() {
+        ChatMessage chatMessage = new ChatMessage() ;
+        chatMessage.setTxt( etMessage.getText().toString() ) ;
+        chatMessage.setAuthor( etAuthor.getText().toString() ) ;
+        try {
+            // POST запрос выполняется в несколько этапов
+            // 1. Конфигурация подключения
+            URL chatUrl = new URL( CHAT_URL ) ;
+            HttpURLConnection connection = (HttpURLConnection) chatUrl.openConnection() ;
+            connection.setDoOutput( true ) ;  // будет иметь тело (output)
+            connection.setDoInput( true ) ;   // будет иметь возврат
+            connection.setRequestMethod( "POST" ) ;
+            connection.setRequestProperty( "Content-Type", "application/json" ) ;  // заголовки
+            connection.setRequestProperty( "Accept", "*/*" ) ;
+            connection.setChunkedStreamingMode( 0 ) ;  // не разделять на чанки (фрагменты)
 
+            // 2. Заполняем тело запроса
+            OutputStream body = connection.getOutputStream() ;
+            body.write( chatMessage.toJsonString().getBytes() ) ;
+            body.close() ;
+
+            // 3. Получаем ответ
+            int responseCode = connection.getResponseCode() ;
+            if( responseCode >= 400 ) {
+                Log.e( "postChatMessage", "responseCode = " + responseCode ) ;
+                return ;
+            }
+            InputStream response = connection.getInputStream() ;
+            ByteArrayOutputStream byteBuilder = new ByteArrayOutputStream() ;
+            byte[] chunk = new byte[ 4096 ] ;
+            int len ;
+            while( ( len = response.read( chunk ) ) != -1 ) {
+                byteBuilder.write( chunk, 0, len ) ;
+            }
+            String responseText = byteBuilder.toString() ;  //  {"status":"success","data":"Create OK"}
+            Log.d( "postChatMessage", responseText ) ;  // TODO: проверить статус ответа
+
+            // освобождаем использованные ресурсы
+            byteBuilder.close() ;
+            response.close() ;
+            connection.disconnect() ;
+
+            // запускаем получение сообщений
+            new Thread( this::getChatMessages ).start() ;
+        }
+        catch( Exception ex ) {
+            Log.e( "postChatMessage", ex.getMessage() ) ;
+        }
     }
 
     /**
@@ -120,9 +223,12 @@ public class ChatActivity extends AppCompatActivity {
         private Date moment;
         private UUID idReply;
         private String replyPreview;
+        //////////////////////////////
+        private View view ;   // представление (View), отображающее данное сообщение
 
         private static final SimpleDateFormat chatMomentFormat =   // "Apr 19, 2023 4:41:35 PM"
                 new SimpleDateFormat( "MMM dd, yyyy KK:mm:ss a", Locale.US ) ;
+
         public ChatMessage() {
         }
 
@@ -143,6 +249,19 @@ public class ChatActivity extends AppCompatActivity {
             if( jsonObject.has( "replyPreview" ) ) {
                 this.setReplyPreview( jsonObject.getString( "replyPreview" ) ) ;
             }
+        }
+
+        public String toJsonString() {
+            StringBuilder sb = new StringBuilder() ;
+            sb.append( String.format( "{\"author\": \"%s\", \"txt\": \"%s\"", this.getAuthor(), this.getTxt() ) ) ;
+            if( idReply != null ) {
+                sb.append( String.format( ", \"idReply\": \"%s\"" , this.getIdReply() ) ) ;
+            }
+            sb.append( "}" ) ;
+            return sb.toString() ;
+        }
+        public String toViewString() {
+            return String.format( "%s: %s", this.getAuthor(), this.getTxt() ) ;
         }
 
         // region Accessors
@@ -193,6 +312,14 @@ public class ChatActivity extends AppCompatActivity {
         public void setReplyPreview( String replyPreview ) {
             this.replyPreview = replyPreview;
         }
+
+        public View getView() {
+            return view;
+        }
+
+        public void setView( View view ) {
+            this.view = view;
+        }
         // endregion
 
         /*
@@ -205,31 +332,3 @@ public class ChatActivity extends AppCompatActivity {
          */
     }
 }
-/*
-Работа с Интернет
-java.net.URL - основной класс (аналог File для файлов)
-URL chatUrl = new URL( CHAT_URL ) ; - создание объекта, подключений не устанавливается
-chatUrl.openStream() - подключение + поток данных (stream)
-android.os.NetworkOnMainThreadException - исключение (без текста сообщения)
-выбрасывается если соединение открывается из основного (UI) потока
-Работа с сетью должна быть асинхронной
-Стартуем в отдельном потоке -
-java.lang.SecurityException: Permission denied (missing INTERNET permission?)
-Добавляем в манифест
-<uses-permission android:name="android.permission.INTERNET"/>
-Следствие того что работа с сетью должна быть в отдельном потоке,
-является ошибка доступа к UI элементам из другого потока (setText)
-Поэтому финальные задачи по отображению желательно переместить в
-отдельный метод, который вызывать методом  runOnUiThread( this::showChatMessages ) ;
-runOnUiThread( () -> setText )
-UI -X- URL             access UI from other thread
-                       |
-     URL - GET - JSON -X- show(setText)
-UI /
-                       runOnUiThread
-     URL - GET - JSON  |
-UI /                  \  show(setText)
-                / JSON
-     URL - GET          \ runOnUiThread
-UI /                     \  show(setText)
- */
