@@ -4,10 +4,10 @@
     android:shape="rectangle">
 
     <stroke
-        android:color="@color/calc_fn_button_bg"
+        android:color="@color/calc_fn_btn_bg"
         android:width="2dp"/>
     <solid
-        android:color="@color/calc_op_button_bg"/>
+        android:color="@color/calc_op_btn_bg"/>
     <corners
         android:radius="5dp"/>
 </shape>

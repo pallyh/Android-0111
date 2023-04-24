@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.button2).setOnClickListener(this::buttonClickDell);
         findViewById(R.id.button3).setOnClickListener(this::buttonGameClick);
+        findViewById(R.id.button_chat).setOnClickListener(this::buttonChatClick);
     }
 
     private void buttonClick(View view){

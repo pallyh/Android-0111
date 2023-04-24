@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Android-011</string>
     <string name="button_chat_text">Chat</string>
+    <string name="chat_channel_name">chat notification channel</string>
+    <string name="chat_channel_description">Android chat app notification channel</string>
+
     <!-- Main Activity -->
     <string name="title_text">Android basics</string>
     <string name="button_calc_text">Calculator</string>

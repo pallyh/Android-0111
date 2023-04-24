@@ -1,10 +1,25 @@
 package step.learning.course;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,26 +52,39 @@ import java.util.UUID;
 public class ChatActivity extends AppCompatActivity {
 
     private final String CHAT_URL = "https://diorama-chat.ew.r.appspot.com/story" ;
+    private final String CHANNEL_ID = "chat_notification_channel" ; //id notification channel
+    private final int POST_NOTIFICATION_REQUEST_CODE =  234;//random codes for get request on send message
     private EditText etAuthor ;
     private EditText etMessage ;
     private LinearLayout chatContainer ;
     private ScrollView svContainer ;
     private List<ChatMessage> chatMessages = new ArrayList<>() ;
+    private MediaPlayer incomingMessagePlayer;
+    private Handler handler;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_chat );
 
+        handler = new Handler();
+
         etAuthor = findViewById( R.id.chat_et_author ) ;
         etMessage = findViewById( R.id.chat_et_message ) ;
+
         chatContainer = findViewById( R.id.chat_container ) ;
         svContainer = findViewById( R.id.sv_container ) ;
+        incomingMessagePlayer =MediaPlayer.create(this , R.raw.sound_1);
         findViewById( R.id.chat_button_send ).setOnClickListener( this::sendMessageClick ) ;
 
-        new Thread( this::getChatMessages ).start() ;
+
+        handler.post(this::updateChat);
     }
 
+    private void updateChat(){
+        new Thread( this::getChatMessages ).start() ;
+        handler.postDelayed(this::updateChat, 3000);
+    }
     private void getChatMessages() {
         try( InputStream chatStream = new URL( CHAT_URL ).openStream() ) {
             ByteArrayOutputStream byteBuilder = new ByteArrayOutputStream() ;
@@ -120,6 +148,9 @@ public class ChatActivity extends AppCompatActivity {
         Drawable otherBg = AppCompatResources.getDrawable(
                 getApplicationContext(),
                 R.drawable.chat_msg_bg_other ) ;
+        Drawable myBg = AppCompatResources.getDrawable(
+                getApplicationContext(),
+                R.drawable.chat_msg_bg_my ) ;
         LinearLayout.LayoutParams marginOther = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT ) ;
@@ -130,20 +161,31 @@ public class ChatActivity extends AppCompatActivity {
                 continue ;  // пропускаем его
             }
             TextView tvMessage = new TextView( ChatActivity.this ) ;
-            tvMessage.setText( message.toViewString() ) ;
+            tvMessage.setText( message.moment + " : " + message.toViewString() ) ;
             /* поле Tag традиционно используется для добавления пользовательской информации -
              * произвольных объектов, связанных с данным представлением (View)
              * Поместив в это поле ссылку на сообщение мы можем использовать ее в обработчиках
              * событий, установленных для представления
              */
+
+            /*tvMessage.setTag( message.moment ) ;*/
             tvMessage.setTag( message ) ;   // связываем View с ChatMessage
             message.setView( tvMessage ) ;  // и наоборот
 
             // стилизуем
-            tvMessage.setBackground( otherBg ) ;
+            String autName = message.author;
+            if (autName.equals(etAuthor.toString())) {
+                tvMessage.setBackground( myBg );
+            }
+            else {
+                tvMessage.setBackground( otherBg ) ;
+            }
             tvMessage.setLayoutParams( marginOther ) ;
             tvMessage.setTextSize( 18 ) ;
             tvMessage.setPadding( 10, 7, 10, 7 ) ;
+            tvMessage.setMovementMethod(etMessage.getMovementMethod());
+
+
 
             // добавляем сообщение в контейнер
             chatContainer.addView( tvMessage ) ;
@@ -151,13 +193,15 @@ public class ChatActivity extends AppCompatActivity {
         }
         if( wasNewMessage ) {
             // даем команду ScrollView прокрутить контент вниз
+
             svContainer.post( () -> svContainer.fullScroll( View.FOCUS_DOWN ) ) ;
+
+            AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE );
+            if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
+                incomingMessagePlayer.start();
+            }
+            showNotification();
         }
-        /*
-        Д.З. Реализовать стилизацию сообщений - свои выводить
-        справа чата и с другим фоном.
-        Признак своего сообщения - совпадение имени автора
-         */
     }
     private void sendMessageClick( View view ) {
         // TODO: проверить на пустоту автора и сообщение
@@ -213,6 +257,52 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    private void showNotification(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    getString(R.string.chat_channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            channel.setDescription(getString(R.string.chat_channel_description));
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(ChatActivity.this,CHANNEL_ID)
+                        .setSmallIcon(android.R.drawable.ic_input_get)
+                        .setContentTitle("Chat")
+                        .setContentText("you get new message")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        Notification notification = notificationBuilder.build();
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+        /*managerCompat.notify(105,notification);*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(ChatActivity.this
+                ,new String[]{
+                        Manifest.permission.POST_NOTIFICATIONS
+                        },POST_NOTIFICATION_REQUEST_CODE
+
+                );
+                return;
+            }
+        }
+        managerCompat.notify(105,notification);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == POST_NOTIFICATION_REQUEST_CODE) {
+
+        }
+    }
+
     /**
      * ORM for Chat API
      */
@@ -236,6 +326,7 @@ public class ChatActivity extends AppCompatActivity {
             this.setId( UUID.fromString( jsonObject.getString( "id" ) ) ) ;
             this.setAuthor( jsonObject.getString( "author" ) ) ;
             this.setTxt( jsonObject.getString( "txt" ) ) ;
+            this.setMoment(moment);
             try {
                 this.setMoment( chatMomentFormat.parse( jsonObject.getString( "moment" ) ) ) ;
             }
